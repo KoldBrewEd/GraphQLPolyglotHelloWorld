@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Polyglot Hello World via GraphQL
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+  GoHelloWorldFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: GoFunction/hello-world/
+      Handler: hello-world
+      Runtime: go1.x
+  NodeHelloWorldFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: NodeFunction/hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+  PythonHelloWorldFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: PythonFunction/hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+  RubyHelloWorldFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: RubyFunction/hello_world/
+      Handler: app.lambda_handler
+      Runtime: ruby2.7
+  awsAppSyncServiceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+  lambdaAccessPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "DirectAppSyncLambda"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Action: "lambda:invokeFunction"
+            Resource:
+              - !GetAtt GoHelloWorldFunction.Arn
+              - !GetAtt NodeHelloWorldFunction.Arn
+              - !GetAtt PythonHelloWorldFunction.Arn
+              - !GetAtt RubyHelloWorldFunction.Arn
+      Roles:
+        -
+          Ref: "awsAppSyncServiceRole"
+  HelloWorldApi:
+    Type: "AWS::AppSync::GraphQLApi"
+    Properties:
+      Name: "PolyglotHellloWorld"
+      AuthenticationType: "API_KEY"
+  HelloWorldApiSchema:
+    Type: "AWS::AppSync::GraphQLSchema"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      Definition: |
+        schema {
+          query: Query
+        }
+        type HelloWorld {
+          go: String
+          node: String
+          python: String
+          ruby: String
+        }
+        type Query {
+          getHelloWorld: HelloWorld
+        }
+  GoDataSource:
+    Type: "AWS::AppSync::DataSource"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      Name: "GoDirect"
+      Type: "AWS_LAMBDA"
+      ServiceRoleArn: !GetAtt awsAppSyncServiceRole.Arn
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt GoHelloWorldFunction.Arn
+  GoResolver:
+    Type: "AWS::AppSync::Resolver"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      TypeName: "HelloWorld"
+      FieldName: "go"
+      DataSourceName: !GetAtt GoDataSource.Name
+  NodeDataSource:
+    Type: "AWS::AppSync::DataSource"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      Name: "NodeDirect"
+      Type: "AWS_LAMBDA"
+      ServiceRoleArn: !GetAtt awsAppSyncServiceRole.Arn
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt NodeHelloWorldFunction.Arn
+  NodeResolver:
+    Type: "AWS::AppSync::Resolver"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      TypeName: "HelloWorld"
+      FieldName: "node"
+      DataSourceName: !GetAtt NodeDataSource.Name
+  PythonDataSource:
+    Type: "AWS::AppSync::DataSource"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      Name: "PythonDirect"
+      Type: "AWS_LAMBDA"
+      ServiceRoleArn: !GetAtt awsAppSyncServiceRole.Arn
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt PythonHelloWorldFunction.Arn
+  PythonResolver:
+    Type: "AWS::AppSync::Resolver"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      TypeName: "HelloWorld"
+      FieldName: "python"
+      DataSourceName: !GetAtt PythonDataSource.Name   
+  RubyDataSource:
+    Type: "AWS::AppSync::DataSource"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      Name: "RubyDirect"
+      Type: "AWS_LAMBDA"
+      ServiceRoleArn: !GetAtt awsAppSyncServiceRole.Arn
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt RubyHelloWorldFunction.Arn
+  RubyResolver:
+    Type: "AWS::AppSync::Resolver"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      TypeName: "HelloWorld"
+      FieldName: "ruby"
+      DataSourceName: !GetAtt RubyDataSource.Name   
+
+Outputs:
+  HelloWorldAPI:
+    Value: !GetAtt HelloWorldApi.Arn
+  GoHelloWorldFunction:
+    Value: !GetAtt GoHelloWorldFunction.Arn
+  NodeHelloWorldFunction:
+    Value: !GetAtt NodeHelloWorldFunction.Arn
+  PythonHelloWorldFunction:
+    Value: !GetAtt PythonHelloWorldFunction.Arn
+  RubyHelloWorldFunction:
+    Value: !GetAtt RubyHelloWorldFunction.Arn
+
