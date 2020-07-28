@@ -1,4 +1,4 @@
-# GraphQLPolyglotHelloWorld
+# GraphQL Polyglot Hello World
  
 ## Requirements
 
@@ -19,7 +19,7 @@ sam deploy --guided
 
 A GraphQL AppSync API linked to 4 Lambda functions based on different runtimes will be deployed in your AWS account.
 
-In order to test, execute the following Query from the AppSync console:
+In order to test, execute the following query from the AppSync console:
 
 ```GraphQL
 query {
@@ -31,4 +31,4 @@ query {
 }
 ```
 
-Due to the nature of GraphQL, you can invoke all 4 Lambda functions with a single network call and receive the results we defined in the query selection set.
+Due to the nature of GraphQL, the query invokes all 4 Lambda functions with a single network call and receive the results defined in the query selection set.
