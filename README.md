@@ -31,4 +31,4 @@ query {
 }
 ```
 
-Due to the nature of GraphQL, the query invokes all 4 Lambda functions with a single network call and receive the results defined in the query selection set.
+Due to the nature of GraphQL, the query invokes all 4 Lambda functions with a single network call and receives the results defined in the query selection set.
