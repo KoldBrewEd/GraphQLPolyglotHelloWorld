@@ -84,6 +84,13 @@ Resources:
         type Query {
           getHelloWorld: HelloWorld
         }
+  QueryResolver:
+    Type: "AWS::AppSync::Resolver"
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
+      TypeName: "Query"
+      FieldName: "getHelloWorld"
+      DataSourceName: !GetAtt GoDataSource.Name
   GoDataSource:
     Type: "AWS::AppSync::DataSource"
     Properties:
