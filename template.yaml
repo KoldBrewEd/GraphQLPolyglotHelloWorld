@@ -84,13 +84,6 @@ Resources:
         type Query {
           getHelloWorld: HelloWorld
         }
-  QueryResolver:
-    Type: "AWS::AppSync::Resolver"
-    Properties:
-      ApiId: !GetAtt HelloWorldApi.ApiId
-      TypeName: "Query"
-      FieldName: "getHelloWorld"
-      DataSourceName: !GetAtt GoDataSource.Name
   GoDataSource:
     Type: "AWS::AppSync::DataSource"
     Properties:
@@ -120,8 +113,8 @@ Resources:
     Type: "AWS::AppSync::Resolver"
     Properties:
       ApiId: !GetAtt HelloWorldApi.ApiId
-      TypeName: "HelloWorld"
-      FieldName: "node"
+      TypeName: "Query"
+      FieldName: "getHelloWorld"
       DataSourceName: !GetAtt NodeDataSource.Name
   PythonDataSource:
     Type: "AWS::AppSync::DataSource"
