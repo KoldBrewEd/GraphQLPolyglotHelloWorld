@@ -23,11 +23,12 @@ In order to test, execute the following query from the AppSync console:
 
 ```GraphQL
 query {
-   getHelloWorld {
-      go
-      node
-      python
-      ruby
+  getHelloWorld{
+    go
+    node
+    python
+    ruby
+  }
 }
 ```
 
