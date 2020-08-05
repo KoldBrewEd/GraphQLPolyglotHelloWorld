@@ -67,6 +67,10 @@ Resources:
     Properties:
       Name: "PolyglotHellloWorld"
       AuthenticationType: "API_KEY"
+  HelloWorldApiKey:
+    Type: AWS::AppSync::ApiKey
+    Properties:
+      ApiId: !GetAtt HelloWorldApi.ApiId
   HelloWorldApiSchema:
     Type: "AWS::AppSync::GraphQLSchema"
     Properties:
