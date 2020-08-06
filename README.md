@@ -1,4 +1,6 @@
 # GraphQL Polyglot Hello World
+
+![Diagram](/media/GraphQLPolyglotHelloWorld.png)
  
 ## Requirements
 
@@ -17,7 +19,7 @@ sam build
 sam deploy --guided
 ```
 
-A GraphQL AppSync API linked to 4 Lambda functions based on different runtimes will be deployed in your AWS account.
+A GraphQL AppSync API linked to 4 Lambda functions based on different runtimes will be deployed in your AWS account leveraging [Direct Lambda Resolvers](https://aws.amazon.com/blogs/mobile/appsync-direct-lambda/) (AWS AppSync without VTL).
 
 In order to test, execute the following query from the AppSync console:
 
